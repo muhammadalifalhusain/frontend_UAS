@@ -9,6 +9,8 @@ const Dashboard = ({ setIsAuthenticated }) => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); // Tambahkan untuk modal edit
+  const [editProduct, setEditProduct] = useState(null); // Simpan produk yang sedang diedit
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
@@ -57,6 +59,54 @@ const Dashboard = ({ setIsAuthenticated }) => {
     }
   };
 
+  // Fungsi untuk mengedit produk
+  const handleEditProduct = (product) => {
+    setEditProduct(product); // Menyimpan produk yang sedang diedit
+    setShowEditModal(true); // Tampilkan modal edit
+  };
+
+  // Fungsi untuk mengupdate produk
+  const handleUpdateProduct = async (updatedProduct) => {
+    const res = await fetch(`${API_URL}/products/${updatedProduct._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(updatedProduct),
+    });
+
+    if (res.status === 200) {
+      setNotification('Product updated successfully');
+      setShowEditModal(false);
+      // Refresh products after updating
+      const updatedProducts = await fetch(`${API_URL}/products`);
+      const data = await updatedProducts.json();
+      setProducts(data);
+    } else {
+      setNotification('Failed to update product');
+    }
+  };
+
+  // Fungsi untuk menghapus produk
+  const handleDeleteProduct = async (product) => {
+    const res = await fetch(`${API_URL}/products/${product._id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+
+    if (res.status === 200) {
+      setNotification('Product deleted successfully');
+      // Refresh products after deleting
+      setProducts(products.filter((prod) => prod._id !== product._id));
+    } else {
+      setNotification('Failed to delete product');
+    }
+  };
+
+  // Handle Logout
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
@@ -99,8 +149,8 @@ const Dashboard = ({ setIsAuthenticated }) => {
           <ProductList
             products={products}
             categories={categories} // Passing categories to ProductList
-            onEdit={() => {}}
-            onDelete={() => {}}
+            onEdit={handleEditProduct}
+            onDelete={handleDeleteProduct}
           />
         </div>
 
@@ -120,6 +170,17 @@ const Dashboard = ({ setIsAuthenticated }) => {
           onClose={() => setShowAddModal(false)}
           onSubmit={handleAddProduct}
           categories={categories} // Pass categories to modal
+        />
+      )}
+
+      {/* Edit Product Modal */}
+      {showEditModal && (
+        <Modal
+          title="Edit Product"
+          onClose={() => setShowEditModal(false)}
+          onSubmit={handleUpdateProduct}
+          initialValues={editProduct} // Pass product data to modal
+          categories={categories}
         />
       )}
     </div>

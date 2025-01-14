@@ -174,26 +174,26 @@ const Dashboard = ({ setIsAuthenticated }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-r from-blue-900 via-purple-900 to-pink-900 text-white">
       {notification && <Notification message={notification} />}
       <div className="container mx-auto py-10">
-        <h1 className="text-4xl font-bold mb-10 text-center">Dashboard</h1>
+        <h1 className="text-5xl font-extrabold mb-12 text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-purple-400">KelolaProduk</h1>
 
         {/* Logout Button */}
         <button
           onClick={handleLogout}
-          className="bg-red-500 text-white p-2 rounded-md absolute top-4 right-4"
+          className="bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-500 transition duration-300 absolute top-6 right-6"
         >
           Logout
         </button>
 
         {/* Category Dropdown */}
-        <div className="mt-6 mb-4">
-          <label className="block text-sm font-medium text-white">Select Category</label>
+        <div className="mt-8 mb-6">
+          <label className="block text-md font-semibold text-white">Select Category</label>
           <select
             value={selectedCategory}
             onChange={(e) => handleCategoryChange(e.target.value)}
-            className="mt-2 w-full p-3 border rounded-md bg-black text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-2 w-full p-3 border-2 border-gray-300 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
           >
             <option value="">All Categories</option>
             {categories.map((category) => (
@@ -207,41 +207,39 @@ const Dashboard = ({ setIsAuthenticated }) => {
         {/* Add Category Button */}
         <button
           onClick={() => setShowAddCategoryModal(true)}
-          className="mt-6 bg-green-500 text-white p-2 rounded-md"
+          className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-400 transition duration-300"
         >
-          Add Category
+          +Kategori
         </button>
 
         {/* Edit Category Button */}
         <button
           onClick={() => setShowCategoryList(!showCategoryList)}
-          className="mt-6 ml-4 bg-yellow-500 text-white p-2 rounded-md"
+          className="ml-4 bg-yellow-500 text-white py-2 px-4 rounded-md hover:bg-yellow-400 transition duration-300"
         >
-          {showCategoryList ? 'Hide Categories' : 'Edit Category'}
+          {showCategoryList ? 'Hide Categories' : 'Edit Kategori'}
         </button>
 
         {/* Show Category List for Editing */}
         {showCategoryList && (
-          <div className="mt-6">
+          <div className="mt-8 space-y-4">
             <h3 className="text-lg font-semibold text-white mb-4">Choose a Category to Edit</h3>
-            <div className="space-y-4">
-              {categories.map((category) => (
-                <div key={category._id} className="flex justify-between items-center bg-gray-800 p-4 rounded-md">
-                  <p className="text-white">{category.nama}</p>
-                  <button
-                    onClick={() => handleEditCategory(category)}
-                    className="bg-blue-500 text-white p-2 rounded-md"
-                  >
-                    Edit
-                  </button>
-                </div>
-              ))}
-            </div>
+            {categories.map((category) => (
+              <div key={category._id} className="flex justify-between items-center bg-gray-700 p-4 rounded-md">
+                <p className="text-white">{category.nama}</p>
+                <button
+                  onClick={() => handleEditCategory(category)}
+                  className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-400 transition duration-300"
+                >
+                  Edit
+                </button>
+              </div>
+            ))}
           </div>
         )}
 
         {/* Product List */}
-        <div className="mt-6">
+        <div className="mt-8">
           <ProductList
             products={products}
             categories={categories} // Passing categories to ProductList
@@ -253,9 +251,9 @@ const Dashboard = ({ setIsAuthenticated }) => {
         {/* Add Product Button */}
         <button
           onClick={() => setShowAddModal(true)}
-          className="mt-6 bg-blue-500 text-white p-2 rounded-md"
+          className="mt-6 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-400 transition duration-300"
         >
-          Add Product
+          +AddProduk
         </button>
       </div>
 
@@ -295,13 +293,13 @@ const Dashboard = ({ setIsAuthenticated }) => {
             <div className="flex justify-end space-x-4 mt-4">
               <button
                 onClick={() => setShowAddCategoryModal(false)}
-                className="bg-gray-500 text-white p-2 rounded-md"
+                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-400 transition duration-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddCategory}
-                className="bg-green-500 text-white p-2 rounded-md"
+                className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-400 transition duration-300"
               >
                 Add Category
               </button>
@@ -314,7 +312,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
       {showEditCategoryModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
-            <h3 className="text-lg font-medium mb-4 text-white">Edit Category</h3>
+            <h3 className="text-lg font-medium mb-4 text-white">Edit Kategori</h3>
             <input
               type="text"
               value={newCategoryName}
@@ -325,13 +323,13 @@ const Dashboard = ({ setIsAuthenticated }) => {
             <div className="flex justify-end space-x-4 mt-4">
               <button
                 onClick={() => setShowEditCategoryModal(false)}
-                className="bg-gray-500 text-white p-2 rounded-md"
+                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-400 transition duration-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdateCategory}
-                className="bg-green-500 text-white p-2 rounded-md"
+                className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-400 transition duration-300"
               >
                 Save Changes
               </button>

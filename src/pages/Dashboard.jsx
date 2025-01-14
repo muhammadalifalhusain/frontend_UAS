@@ -9,10 +9,12 @@ const Dashboard = ({ setIsAuthenticated }) => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false); // Tambahkan untuk modal edit
+  const [showEditModal, setShowEditModal] = useState(false); // Tambahkan untuk modal edit produk
   const [editProduct, setEditProduct] = useState(null); // Simpan produk yang sedang diedit
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false); // Modal untuk menambah kategori
+  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false); // Modal untuk mengedit kategori
   const [newCategoryName, setNewCategoryName] = useState(''); // Nama kategori baru
+  const [editCategory, setEditCategory] = useState(null); // Kategori yang sedang diedit
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
@@ -82,6 +84,37 @@ const Dashboard = ({ setIsAuthenticated }) => {
       setCategories(data);
     } else {
       setNotification('Failed to add category');
+    }
+  };
+
+  // Fungsi untuk mengedit kategori
+  const handleEditCategory = (category) => {
+    setEditCategory(category); // Menyimpan kategori yang sedang diedit
+    setNewCategoryName(category.nama); // Menyimpan nama kategori untuk diubah
+    setShowEditCategoryModal(true); // Tampilkan modal edit kategori
+  };
+
+  // Fungsi untuk mengupdate kategori
+  const handleUpdateCategory = async () => {
+    const updatedCategory = { nama: newCategoryName };
+    const res = await fetch(`${API_URL}/categories/${editCategory._id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(updatedCategory),
+    });
+
+    if (res.status === 200) {
+      setNotification('Category updated successfully');
+      setShowEditCategoryModal(false);
+      // Refresh categories after updating
+      const updatedCategories = await fetch(`${API_URL}/categories`);
+      const data = await updatedCategories.json();
+      setCategories(data);
+    } else {
+      setNotification('Failed to update category');
     }
   };
 
@@ -178,6 +211,14 @@ const Dashboard = ({ setIsAuthenticated }) => {
           Add Category
         </button>
 
+        {/* Edit Category Button */}
+        <button
+          onClick={() => setShowEditCategoryModal(true)}
+          className="mt-6 ml-4 bg-yellow-500 text-white p-2 rounded-md"
+        >
+          Edit Category
+        </button>
+
         {/* Product List */}
         <div className="mt-6">
           <ProductList
@@ -242,6 +283,36 @@ const Dashboard = ({ setIsAuthenticated }) => {
                 className="bg-green-500 text-white p-2 rounded-md"
               >
                 Add Category
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Category Modal */}
+      {showEditCategoryModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h3 className="text-lg font-medium mb-4 text-white">Edit Category</h3>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="mt-2 w-full p-3 border rounded-md bg-black text-white"
+              placeholder="Category Name"
+            />
+            <div className="flex justify-end space-x-4 mt-4">
+              <button
+                onClick={() => setShowEditCategoryModal(false)}
+                className="bg-gray-500 text-white p-2 rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateCategory}
+                className="bg-green-500 text-white p-2 rounded-md"
+              >
+                Save Changes
               </button>
             </div>
           </div>

@@ -9,9 +9,10 @@ const Dashboard = ({ setIsAuthenticated }) => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false); // Tambahkan untuk modal edit produk
+  const [showEditModal, setShowEditModal] = useState(false); // Modal untuk edit produk
   const [editProduct, setEditProduct] = useState(null); // Simpan produk yang sedang diedit
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false); // Modal untuk menambah kategori
+  const [showCategoryList, setShowCategoryList] = useState(false); // Menampilkan daftar kategori untuk edit
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false); // Modal untuk mengedit kategori
   const [newCategoryName, setNewCategoryName] = useState(''); // Nama kategori baru
   const [editCategory, setEditCategory] = useState(null); // Kategori yang sedang diedit
@@ -87,7 +88,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     }
   };
 
-  // Fungsi untuk mengedit kategori
+  // Fungsi untuk menampilkan modal edit kategori
   const handleEditCategory = (category) => {
     setEditCategory(category); // Menyimpan kategori yang sedang diedit
     setNewCategoryName(category.nama); // Menyimpan nama kategori untuk diubah
@@ -213,11 +214,31 @@ const Dashboard = ({ setIsAuthenticated }) => {
 
         {/* Edit Category Button */}
         <button
-          onClick={() => setShowEditCategoryModal(true)}
+          onClick={() => setShowCategoryList(!showCategoryList)}
           className="mt-6 ml-4 bg-yellow-500 text-white p-2 rounded-md"
         >
-          Edit Category
+          {showCategoryList ? 'Hide Categories' : 'Edit Category'}
         </button>
+
+        {/* Show Category List for Editing */}
+        {showCategoryList && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Choose a Category to Edit</h3>
+            <div className="space-y-4">
+              {categories.map((category) => (
+                <div key={category._id} className="flex justify-between items-center bg-gray-800 p-4 rounded-md">
+                  <p className="text-white">{category.nama}</p>
+                  <button
+                    onClick={() => handleEditCategory(category)}
+                    className="bg-blue-500 text-white p-2 rounded-md"
+                  >
+                    Edit
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Product List */}
         <div className="mt-6">

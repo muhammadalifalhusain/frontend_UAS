@@ -11,6 +11,8 @@ const Dashboard = ({ setIsAuthenticated }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); // Tambahkan untuk modal edit
   const [editProduct, setEditProduct] = useState(null); // Simpan produk yang sedang diedit
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false); // Modal untuk menambah kategori
+  const [newCategoryName, setNewCategoryName] = useState(''); // Nama kategori baru
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
@@ -56,6 +58,30 @@ const Dashboard = ({ setIsAuthenticated }) => {
       setProducts(data);
     } else {
       setNotification('Failed to add product');
+    }
+  };
+
+  // Fungsi untuk menambahkan kategori baru
+  const handleAddCategory = async () => {
+    const newCategory = { nama: newCategoryName };
+    const res = await fetch(`${API_URL}/categories`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(newCategory),
+    });
+
+    if (res.status === 201) {
+      setNotification('Category added successfully');
+      setShowAddCategoryModal(false);
+      // Refresh categories after adding
+      const updatedCategories = await fetch(`${API_URL}/categories`);
+      const data = await updatedCategories.json();
+      setCategories(data);
+    } else {
+      setNotification('Failed to add category');
     }
   };
 
@@ -144,6 +170,14 @@ const Dashboard = ({ setIsAuthenticated }) => {
           </select>
         </div>
 
+        {/* Add Category Button */}
+        <button
+          onClick={() => setShowAddCategoryModal(true)}
+          className="mt-6 bg-green-500 text-white p-2 rounded-md"
+        >
+          Add Category
+        </button>
+
         {/* Product List */}
         <div className="mt-6">
           <ProductList
@@ -182,6 +216,36 @@ const Dashboard = ({ setIsAuthenticated }) => {
           initialValues={editProduct} // Pass product data to modal
           categories={categories}
         />
+      )}
+
+      {/* Add Category Modal */}
+      {showAddCategoryModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h3 className="text-lg font-medium mb-4 text-white">Add New Category</h3>
+            <input
+              type="text"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="mt-2 w-full p-3 border rounded-md bg-black text-white"
+              placeholder="Category Name"
+            />
+            <div className="flex justify-end space-x-4 mt-4">
+              <button
+                onClick={() => setShowAddCategoryModal(false)}
+                className="bg-gray-500 text-white p-2 rounded-md"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleAddCategory}
+                className="bg-green-500 text-white p-2 rounded-md"
+              >
+                Add Category
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
